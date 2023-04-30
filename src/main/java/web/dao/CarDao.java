@@ -9,8 +9,6 @@ import java.util.List;
 public class CarDao {
     public static List<Car> cars;
 
-    private List<Car> carsNumber;
-
     private static int CAR_COUNT;
 
     {
