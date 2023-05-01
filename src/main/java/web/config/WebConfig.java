@@ -34,17 +34,11 @@ public class WebConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
     private final Environment env;
 
-//    @Autowired
-//    public SpringConfig(ApplicationContext applicationContext, Environment env) {
-//        this.applicationContext = applicationContext;
-//        this.env = env;
-//    }
     @Autowired
     public WebConfig(ApplicationContext applicationContext, Environment env) {
         this.applicationContext = applicationContext;
         this.env = env;
     }
-
 
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
@@ -63,13 +57,13 @@ public class WebConfig implements WebMvcConfigurer {
         return templateEngine;
     }
 
-
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
         resolver.setTemplateEngine(templateEngine());
         registry.viewResolver(resolver);
     }
+
     @Bean
     public DataSource getDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -79,11 +73,11 @@ public class WebConfig implements WebMvcConfigurer {
         dataSource.setPassword(env.getProperty("db.password"));
         return dataSource;
     }
+
     private Properties hibernateProperties() {
         Properties properties = new Properties();
         properties.put("hibernate.dialect", env.getRequiredProperty("hibernate.dialect"));
         properties.put("hibernate.show_sql", env.getRequiredProperty("hibernate.show_sql"));
-
         return properties;
     }
 
@@ -93,7 +87,6 @@ public class WebConfig implements WebMvcConfigurer {
         sessionFactory.setDataSource(getDataSource());
         sessionFactory.setPackagesToScan("web.models");
         sessionFactory.setHibernateProperties(hibernateProperties());
-
         return sessionFactory;
     }
 
@@ -101,9 +94,9 @@ public class WebConfig implements WebMvcConfigurer {
     public PlatformTransactionManager hibernateTransactionManager() {
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
         transactionManager.setSessionFactory(sessionFactory().getObject());
-
         return transactionManager;
     }
+
     @Bean
     public EntityManager makeEntityManager(EntityManagerFactory entityManagerFactory) {
         return entityManagerFactory.createEntityManager();

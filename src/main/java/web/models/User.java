@@ -3,23 +3,24 @@ package web.models;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Person")
-public class Person {
+@Table(name = "User")
+public class User {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(name = "name")
     private String name;
+    @Column(name = "email")
+    private String email;
 
-
-    public Person() {
-
+    public User() {
     }
 
-    public Person(int id, String name) {
+    public User(int id, String name, String email) {
         this.id = id;
         this.name = name;
+        this.email = email;
     }
 
     public int getId() {
@@ -36,5 +37,13 @@ public class Person {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
