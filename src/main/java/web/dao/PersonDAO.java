@@ -1,6 +1,10 @@
 package web.dao;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import web.models.Person;
 
 import java.util.ArrayList;
@@ -8,41 +12,48 @@ import java.util.List;
 
 @Component
 public class PersonDAO {
-    private static int PEOPLE_COUNT;
-    private List<Person> people;
 
-    {
-        people = new ArrayList<>();
+    private final SessionFactory sessionFactory;
 
-        people.add(new Person(++PEOPLE_COUNT, "Tom"));
-        people.add(new Person(++PEOPLE_COUNT, "Bob"));
-        people.add(new Person(++PEOPLE_COUNT, "Mike"));
-        people.add(new Person(++PEOPLE_COUNT, "Katy"));
+    @Autowired
+    public PersonDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
+    @Transactional(readOnly = true)
     public List<Person> index() {
-        return people;
+
+        Session session = sessionFactory.getCurrentSession();
+
+        return session.createQuery("select p from Person p", Person.class)
+                .getResultList();
     }
 
+    @Transactional(readOnly = true)
     public Person show(int id) {
-        return people.stream().filter(person -> person.getId() == id).findAny().orElse(null);
+        Session session = sessionFactory.getCurrentSession();
+        return session.get(Person.class, id);
     }
 
-
-
+    @Transactional
     public void save(Person person) {
-        person.setId(++PEOPLE_COUNT);
-        people.add(person);
+        Session session = sessionFactory.getCurrentSession();
+        session.save(person);
     }
 
+    @Transactional
     public void update(int id, Person updatedPerson) {
-        Person personToBeUpdated = show(id);
+        Session session = sessionFactory.getCurrentSession();
+        Person personToBeUpdated = session.get(Person.class, id);
 
         personToBeUpdated.setName(updatedPerson.getName());
+       
     }
 
+    @Transactional
     public void delete(int id) {
-        people.removeIf(p -> p.getId() == id);
+        Session session = sessionFactory.getCurrentSession();
+        session.remove(session.get(Person.class, id));
     }
 }
 
